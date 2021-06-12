@@ -22,47 +22,87 @@ class Photo:
         return self.orientation == 'V'
 
 
+class Slide:
+    """
+    Represents a slide containing :
+    - one horizontal photo
+    or
+    - two vertical photos.
+    """
+
+    def __init__(self, photo1, photo2=None):
+        if photo2:
+            # Check if we have 2 vertical photos
+            assert photo1.is_vertical() and photo2.is_vertical(), "At least one photo is not vertical."
+        else:
+            # Check if we are trying to insert 1 single vertical photo.
+            assert not photo1.is_vertical(), "Not allowed to create a slide with a single vertical photo."
+        self.content = [photo1] if photo2 is None else [photo1, photo2]
+
+    def has_vertical(self):
+        # Does the slide contains 2 vertical photos or not.
+        return len(self.content) == 2
+
+    def get_first(self):
+        return self.content[0]
+
+    def get_last(self):
+        return self.content[-1]
+
+    def get_content(self):
+        return self.content
+
+    def flip(self):
+        # Only useful slides with two vertical photos.
+        save_photo = self.content[0]
+        self.content[0] = self.content[-1]
+        self.content[-1] = save_photo
+
+    def __repr__(self):
+        return repr(self.content)
+
+
 class Slideshow:
     """
-    Represents an ordered sequence of photos. The order will give the final score.
-    Can make the slideshow grow by adding one photo to the left or to the right at a time.
-    Can also see the current photo at the left/right. 
+    Represents an ordered sequence of slides.
+    Can make the slideshow grow by adding one slide to the left or to the right at a time.
+    Can also see the current slide at the left/right.
     """
 
     def __init__(self):
-        self.photos = []
+        self.slides = []
 
-    def add_left(self, photo):
-        self.photos.insert(0, photo)
+    def add_left(self, slide):
+        self.slides.insert(0, slide)
 
-    def add_right(self, photo):
-        self.photos.append(photo)
+    def add_right(self, slide):
+        self.slides.append(slide)
 
-    def get_photos(self):
-        return self.photos
+    def get_slides(self):
+        return self.slides
 
     def get_first(self):
-        return self.photos[0]
+        return self.slides[0]
 
     def get_last(self):
-        return self.photos[-1]
+        return self.slides[-1]
 
     def __repr__(self):
-        return repr(self.photos)
+        return repr(self.slides)
 
     def __len__(self):
-        return len(self.photos)
+        return len(self.slides)
 
 
 ###########################################
 # Metrics
 ###########################################
 
-def compute_score(photo1, photo2):
-    """ Calculates score of transition between photo1 to photo2.
+def score_photos(photo1, photo2):
+    """ Calculates transition score between photo1 to photo2.
     :param photo1: First photo (left).
     :param photo2: Second photo (right).
-    :return:
+    :return: Int score
     """
     common_tags = photo1.get_tags().intersection(photo2.get_tags())
     return min(len(common_tags),
@@ -70,24 +110,32 @@ def compute_score(photo1, photo2):
                len(photo2.get_tags()-common_tags))
 
 
-def compute_score_slideshow(slideshow):
-    """ Calculates the total score given the slideshow.
-    :param slide: Slideshow
+def score_slides(slide1, slide2):
+    """ Calculates transition score from slide1 to slide2.
+    :param slide1: First slide (left).
+    :param slide2: Second slide (right).
+    :return: Int score
+    """
+    return score_photos(slide1.get_last(), slide2.get_first())
+
+
+def score_slideshow(slideshow):
+    """ Calculates the total score of the given slideshow.
+    :param slideshow: Slideshow
     :return: Int score.
     """
     assert len(slideshow) > 0
-    s = 0
-    photos = slideshow.get_photos()
-    if len(photos) > 1:
-        assert photos[0].is_vertical() == photos[1].is_vertical(), f"V/H rule broken at position [0, 1] in slide"
-        assert photos[-1].is_vertical() == photos[-2].is_vertical(), f"V/H rule broken at the 2 last positions in slide"
+    slides = slideshow.get_slides()
+    # Handle first slide which can be composed of 2 vertical photos - score photos
+    s = 0 if not slides[0].has_vertical() else score_photos(slides[0].get_first(), slides[0].get_last())
     for i in range(1, len(slideshow)):
-        s += compute_score(photos[i-1], photos[i])
+        # Between 2 slides
+        s += score_slides(slides[i-1], slides[i])
 
-        # Check if a vertical image is next to another vertical image
-        if (i-2 >= 0) and (not photos[i-2].is_vertical()) and \
-                (photos[i-1].is_vertical()) and (not photos[i].is_vertical()):
-            raise Exception(f"V/H rule broken at position {[i-2, i-1, i]} in slide")
+        # For vertical photos - score transition between these two vertical photos
+        if slides[i].has_vertical():
+            s += score_photos(slides[i].get_first(), slides[i].get_last())
+
     return s
 
 
