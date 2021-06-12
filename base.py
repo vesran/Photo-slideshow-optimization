@@ -49,6 +49,11 @@ class Slide:
 ###########################################
 
 def compute_score(photo1, photo2):
+    """ Calculates score of transition between photo1 to photo2.
+    :param photo1: First photo (left).
+    :param photo2: Second photo (right).
+    :return:
+    """
     common_tags = photo1.get_tags().intersection(photo2.get_tags())
     return min(len(common_tags),
                len(photo1.get_tags()-common_tags),
@@ -56,6 +61,10 @@ def compute_score(photo1, photo2):
 
 
 def compute_score_slide(slide):
+    """ Calculates the total score given the slideshow.
+    :param slide: Slideshow
+    :return: Int score.
+    """
     assert len(slide) > 0
     s = 0
     photos = slide.get_photos()
@@ -77,6 +86,11 @@ def compute_score_slide(slide):
 ###########################################
 
 def load_data(filename, verbose=1):
+    """ Reads data.
+    :param filename: File containing data about photos.
+    :param verbose: Verbose purposes. Set it to 0 in order to silent everything.
+    :return: list of Photo described in the specified file.
+    """
     # Get lines
     with open(filename, 'r') as f:
         lines = f.readlines()
