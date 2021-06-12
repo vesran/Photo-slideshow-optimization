@@ -38,25 +38,17 @@ class Slide:
             # Check if we are trying to insert 1 single vertical photo.
             assert not photo1.is_vertical(), "Not allowed to create a slide with a single vertical photo."
         self.content = [photo1] if photo2 is None else [photo1, photo2]
+        self.tags = photo1.get_tags().union(photo2.get_tags()) if photo2 else photo1.get_tags()
 
     def has_vertical(self):
         # Does the slide contains 2 vertical photos or not.
         return len(self.content) == 2
 
-    def get_first(self):
-        return self.content[0]
-
-    def get_last(self):
-        return self.content[-1]
+    def get_tags(self):
+        return self.tags
 
     def get_content(self):
         return self.content
-
-    def flip(self):
-        # Only useful slides with two vertical photos.
-        save_photo = self.content[0]
-        self.content[0] = self.content[-1]
-        self.content[-1] = save_photo
 
     def __repr__(self):
         return repr(self.content)
@@ -98,25 +90,16 @@ class Slideshow:
 # Metrics
 ###########################################
 
-def score_photos(photo1, photo2):
-    """ Calculates transition score between photo1 to photo2.
-    :param photo1: First photo (left).
-    :param photo2: Second photo (right).
-    :return: Int score
-    """
-    common_tags = photo1.get_tags().intersection(photo2.get_tags())
-    return min(len(common_tags),
-               len(photo1.get_tags()-common_tags),
-               len(photo2.get_tags()-common_tags))
-
-
 def score_slides(slide1, slide2):
-    """ Calculates transition score from slide1 to slide2.
-    :param slide1: First slide (left).
-    :param slide2: Second slide (right).
+    """ Calculates transition score between photo1 to photo2.
+    :param slide1: First photo (left).
+    :param slide2: Second photo (right).
     :return: Int score
     """
-    return score_photos(slide1.get_last(), slide2.get_first())
+    common_tags = slide1.get_tags().intersection(slide2.get_tags())
+    return min(len(common_tags),
+               len(slide1.get_tags()-common_tags),
+               len(slide2.get_tags()-common_tags))
 
 
 def score_slideshow(slideshow):
@@ -127,14 +110,10 @@ def score_slideshow(slideshow):
     assert len(slideshow) > 0
     slides = slideshow.get_slides()
     # Handle first slide which can be composed of 2 vertical photos - score photos
-    s = 0 if not slides[0].has_vertical() else score_photos(slides[0].get_first(), slides[0].get_last())
+    s = 0
     for i in range(1, len(slideshow)):
         # Between 2 slides
         s += score_slides(slides[i-1], slides[i])
-
-        # For vertical photos - score transition between these two vertical photos
-        if slides[i].has_vertical():
-            s += score_photos(slides[i].get_first(), slides[i].get_last())
 
     return s
 
