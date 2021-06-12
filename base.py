@@ -1,6 +1,11 @@
 
 
 class Photo:
+    """
+    Represents a photo. Photo has
+    - an orientation which can be 'V' or 'H',
+    - a set of tags.
+    """
 
     def __init__(self, orientation, tags):
         assert orientation in ('V', 'H')
@@ -18,6 +23,11 @@ class Photo:
 
 
 class Slideshow:
+    """
+    Represents an ordered sequence of photos. The order will give the final score.
+    Can make the slideshow grow by adding one photo to the left or to the right at a time.
+    Can also see the current photo at the left/right. 
+    """
 
     def __init__(self):
         self.photos = []
