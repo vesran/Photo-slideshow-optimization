@@ -17,7 +17,7 @@ class Photo:
         return self.orientation == 'V'
 
 
-class Slide:
+class Slideshow:
 
     def __init__(self):
         self.photos = []
@@ -60,18 +60,18 @@ def compute_score(photo1, photo2):
                len(photo2.get_tags()-common_tags))
 
 
-def compute_score_slide(slide):
+def compute_score_slideshow(slideshow):
     """ Calculates the total score given the slideshow.
     :param slide: Slideshow
     :return: Int score.
     """
-    assert len(slide) > 0
+    assert len(slideshow) > 0
     s = 0
-    photos = slide.get_photos()
+    photos = slideshow.get_photos()
     if len(photos) > 1:
         assert photos[0].is_vertical() == photos[1].is_vertical(), f"V/H rule broken at position [0, 1] in slide"
         assert photos[-1].is_vertical() == photos[-2].is_vertical(), f"V/H rule broken at the 2 last positions in slide"
-    for i in range(1, len(slide)):
+    for i in range(1, len(slideshow)):
         s += compute_score(photos[i-1], photos[i])
 
         # Check if a vertical image is next to another vertical image
