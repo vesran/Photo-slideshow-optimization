@@ -91,9 +91,9 @@ class Slideshow:
 ###########################################
 
 def score_slides(slide1, slide2):
-    """ Calculates transition score between photo1 to photo2.
-    :param slide1: First photo (left).
-    :param slide2: Second photo (right).
+    """ Calculates transition score between slide1 to slide2.
+    :param slide1: First slide (left).
+    :param slide2: Second slide (right).
     :return: Int score
     """
     common_tags = slide1.get_tags().intersection(slide2.get_tags())
