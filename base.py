@@ -140,7 +140,7 @@ def load_data(filename, verbose=1):
         array = line.strip().split(' ')
         orientation = array[0]
         num_tags = int(array[1])
-        tags = array[2:]
+        tags = set(array[2:])
         assert len(tags) == num_tags, f'The number of tags is not what is expected at line {i}.'
         # Add photo
         photos.append(Photo(orientation, tags))
@@ -151,5 +151,8 @@ def load_data(filename, verbose=1):
 
 
 if __name__ == '__main__':
-    filename = "data/e_shiny_selfies.txt"
+    filename = "data/a_example.txt"
     photos = load_data(filename)
+
+    print(Slide(photos[0]))
+    print(Slide(photos[1], photos[2]))
