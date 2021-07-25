@@ -44,7 +44,7 @@ class UCBSolution:
             prev_idx = idx
         return res
 
-    def UCB(self, current_idx_slide, possible_idx_slides, idx_slides, all_slides, n_sims):
+    def UCB(self, current_idx_slide, possible_idx_slides, idx_slides, all_slides, n_sims, constant=0.7):
         scores = [[idx, 0, 0, idx, i] for i, idx in enumerate(possible_idx_slides)]  # idx, score, num chosen
         for s in range(1, n_sims+1):
             best_val = 0
@@ -54,7 +54,7 @@ class UCBSolution:
                 val = 100000.0
                 if scores[i][2] > 0:
                     # Slide visited
-                    val = scores[i][1] / scores[i][2] + 0.7 * math.sqrt(math.log(s) / scores[i][2])
+                    val = scores[i][1] / scores[i][2] + constant * math.sqrt(math.log(s) / scores[i][2])
                 if val >= best_val:
                     best_val = val
                     best_idx_slide = idx_slide
@@ -70,7 +70,7 @@ class UCBSolution:
         return max(scores,  key=lambda x: x[2])[0]
 
     @timeit
-    def create_slideshow(self, src_slides, max_candidates=100):
+    def create_slideshow(self, src_slides, max_candidates=100, ucb_constant=0.7):
         idx_slides = sorted(range(0, len(src_slides)), key=lambda x: -len(src_slides[x].get_tags()))
 
         seed_idx = 0
@@ -85,7 +85,8 @@ class UCBSolution:
         for _ in t:
             sample_idx_slides = self.get_candidate_idx_slides(list(idx_slides), max_candidates=max_candidates)
             if len(sample_idx_slides) > 0:
-                next_idx_slide = self.UCB(next_idx_slide, sample_idx_slides, idx_slides, src_slides, n_sims=max_candidates*3)
+                next_idx_slide = self.UCB(next_idx_slide, sample_idx_slides, idx_slides, src_slides,
+                                          n_sims=max_candidates*3, constant=ucb_constant)
             else:
                 # Choose randomly
                 num_random += 1
@@ -98,12 +99,12 @@ class UCBSolution:
         assert len(idx_slides) == 0
         return sh
 
-    def run(self, filename, max_candidates=100):
+    def run(self, filename, max_candidates=100, ucb_constant=0.7):
         photos = load_data(filename)
         slides = self.form_slides(photos)
         del photos
         print(f'Num slides : {len(slides)}')
-        slideshow = self.create_slideshow(slides, max_candidates=max_candidates)
+        slideshow = self.create_slideshow(slides, max_candidates=max_candidates, ucb_constant=ucb_constant)
         score = score_slideshow(slideshow)
         print(f'Score : {score}')
         return slideshow
