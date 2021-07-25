@@ -63,11 +63,14 @@ class Slideshow:
 
     def __init__(self):
         self.slides = []
+        self.scores = []
 
     def add_left(self, slide):
+        self.scores.append(score_slides(self.slides[0], slide)) if len(self) > 0 else self.scores.append(0)
         self.slides.insert(0, slide)
 
     def add_right(self, slide):
+        self.scores.append(score_slides(self.slides[-1], slide)) if len(self) > 0 else self.scores.append(0)
         self.slides.append(slide)
 
     def get_slides(self):
