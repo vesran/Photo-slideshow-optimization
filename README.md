@@ -4,7 +4,7 @@ Google hashcode 2019 solution - A picture is worth a thousand words
 <a href='https://storage.googleapis.com/coding-competitions.appspot.com/HC/2019/hashcode2019_qualification_task.pdf'>[Task]</a>
 <a href='https://www.kaggle.com/c/hashcode-photo-slideshow'>[Kaggle's version]</a>
 
-This is a project assignment for the Monte-Carlo Search course of <a href="https://www.lamsade.dauphine.fr/wp/iasd/en/">IASD Master program</a>.
+This is a project assignment for the Monte-Carlo Search course of the <a href="https://www.lamsade.dauphine.fr/wp/iasd/en/">IASD Master</a> program.
 
 ## Task 
 
