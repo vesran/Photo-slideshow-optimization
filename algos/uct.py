@@ -92,7 +92,7 @@ class UCT:
         table = {}
         for _ in range(n):
             s1 = copy.deepcopy(state)
-            _ = self.uct(state, table, c)
+            _ = self.uct(s1, table, c)
         moves = self.legal_moves(state)
         best_move_idx = max(range(self.max_candidates), key=lambda x: table.get(state[-1], 0)[1][x])
         best_move = moves[best_move_idx]
@@ -118,4 +118,4 @@ class UCT:
 if __name__ == '__main__':
     filename = "data/c_memorable_moments.txt"
     sol = UCT(filename, max_slides=50, max_candidates=3)
-    slideshow = sol.run(30, 0.01)
+    slideshow = sol.run(30, 3.4)
