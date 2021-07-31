@@ -9,3 +9,8 @@ Google hashcode 2019 solution - A picture is worth a thousand words
 Given a list of photos and the tags associated with each photo, arrange the photos into a slideshow that is as "interesting" as possible. This is an optimization problem.
 
 ![Example](imgs/ex.jpg)
+
+
+## Structure
+
+Plain code is stored on ```algos``` directory. Experiments are in the ```notebooks``` folder.
