@@ -14,3 +14,22 @@ Given a list of photos and the tags associated with each photo, arrange the phot
 ## Structure
 
 Plain code is stored on ```algos``` directory. Experiments are in the ```notebooks``` folder.
+
+```
+project
+│
+└───algos
+│---│---greedy.py
+│---│---nrpas.py
+│---│---nested.py
+│---│---uct.py
+│---│---nmcsTimed.py  # Earlystop with time
+│---│---nrpaTimed.py  # Earlystop with time
+│   
+└───notebooks
+│---│---greedy.ipynb
+│---│---nrpa.ipynb  # NRPA & SNRPA
+│---│---uct.ipynb
+│---│---nested.ipynb
+
+```
