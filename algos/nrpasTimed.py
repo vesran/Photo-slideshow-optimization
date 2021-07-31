@@ -41,7 +41,7 @@ class NRPASolutionTimed:
         return slides
 
     def legal_moves(self, state):
-        return state[1][:self.max_candidates]
+        return state[1][:]
 
     def terminal(self, slideshow):
         return len(slideshow) == len(self.slides_ids)
